@@ -1,0 +1,124 @@
+
+> ledger@1.0.0 dev C:\Users\Samarth\Desktop\EXPENSE WATCHDOG\ledger
+> next dev "--hostname" "127.0.0.1" "--port" "3001"
+
+   ▲ Next.js 15.5.15
+   - Local:        http://127.0.0.1:3001
+   - Network:      http://127.0.0.1:3001
+
+ ✓ Starting...
+ ✓ Ready in 5.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.1s (860 modules)
+ GET / 200 in 1537ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.6s (856 modules)
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 4440ms
+ POST / 303 in 4644ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 550ms
+ POST / 303 in 868ms
+ POST /dashboard 200 in 1081ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 241ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 162ms
+ POST / 303 in 245ms
+ POST /dashboard 200 in 301ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 183ms
+ POST / 303 in 261ms
+ POST /dashboard 200 in 315ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 141ms
+ POST / 303 in 226ms
+ POST /dashboard 200 in 278ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 161ms
+ POST / 303 in 244ms
+ POST /dashboard 200 in 296ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 154ms
+ POST / 303 in 229ms
+ POST /dashboard 200 in 288ms
+ ✓ Compiled in 1836ms (856 modules)
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 942ms
+ ✓ Compiled in 491ms (239 modules)
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 157ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 379ms
+ GET / 200 in 79ms
+ GET / 200 in 86ms
+ POST / 303 in 203ms
+ GET / 200 in 65ms
+ GET / 200 in 55ms
+prisma:error 
+Invalid `prisma.user.upsert()` invocation:
+
+
+
+ GET /dashboard 200 in 102ms
+ POST / 303 in 155ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1166ms (847 modules)
+ GET /dashboard 404 in 1855ms
+   Reload env: .env
+ ✓ Compiled in 1705ms (856 modules)
+ ✓ Compiled in 642ms (239 modules)
+ ✓ Compiled in 506ms (239 modules)
+ ✓ Compiled in 239ms (239 modules)
+ ✓ Compiled in 376ms (239 modules)
+   Reload env: .env
+ ✓ Compiled in 861ms (842 modules)
+ ✓ Compiled in 1091ms (842 modules)
+ ✓ Compiled in 228ms (239 modules)
+ ✓ Compiled in 1221ms (856 modules)
+ ✓ Compiled in 238ms (239 modules)
+ ✓ Compiled in 362ms (239 modules)

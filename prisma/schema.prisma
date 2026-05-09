@@ -1,0 +1,175 @@
+// Prisma schema for Ledger - subscription auditor.
+// Ledger domain table names are kept exact per the Phase 1 prompt.
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String   @db.Uuid
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  source_accounts SourceAccount[]
+  subscriptions   Subscription[]
+  findings        Finding[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model SourceAccount {
+  id             String    @id @default(uuid()) @db.Uuid
+  user_id        String    @db.Uuid
+  kind           String
+  identifier     String
+  oauth_token    String?
+  oauth_refresh  String?
+  region         String?
+  sync_cursor    String?
+  last_synced_at DateTime? @db.Timestamptz
+  status         String    @default("active")
+  created_at     DateTime  @default(now()) @db.Timestamptz
+
+  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  raw_events RawEvent[]
+
+  @@unique([user_id, kind, identifier])
+  @@map("source_accounts")
+}
+
+model RawEvent {
+  id             BigInt    @id @default(autoincrement())
+  source_id      String    @db.Uuid
+  external_id    String
+  occurred_at    DateTime  @db.Timestamptz
+  sender         String?
+  subject        String?
+  body           String?
+  body_hash      String
+  amount_minor   BigInt?
+  currency       String?   @db.Char(3)
+  raw_json       Json?
+  parsed_at      DateTime? @db.Timestamptz
+  parser_version Int?
+
+  source             SourceAccount       @relation(fields: [source_id], references: [id])
+  subscription_links SubscriptionEvent[]
+
+  @@unique([source_id, external_id])
+  @@map("raw_events")
+}
+
+model Subscription {
+  id             String    @id @default(uuid()) @db.Uuid
+  user_id        String    @db.Uuid
+  vendor_id      String?   @db.Uuid
+  display_name   String
+  amount_minor   BigInt
+  currency       String    @db.Char(3)
+  cycle          String
+  next_charge_on DateTime? @db.Date
+  first_seen_on  DateTime  @db.Date
+  last_charge_on DateTime? @db.Date
+  category       String?
+  status         String    @default("active")
+  confidence     Decimal   @default(1.00) @db.Decimal(3, 2)
+  detected_via   String[]
+  created_at     DateTime  @default(now()) @db.Timestamptz
+  updated_at     DateTime  @updatedAt @db.Timestamptz
+
+  user                User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  vendor              Vendor?             @relation(fields: [vendor_id], references: [id])
+  subscription_events SubscriptionEvent[]
+  findings            Finding[]
+
+  @@map("subscriptions")
+}
+
+model SubscriptionEvent {
+  subscription_id String @db.Uuid
+  raw_event_id    BigInt
+
+  subscription Subscription @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  raw_event    RawEvent     @relation(fields: [raw_event_id], references: [id])
+
+  @@id([subscription_id, raw_event_id])
+  @@map("subscription_events")
+}
+
+model Vendor {
+  id                  String   @id @default(uuid()) @db.Uuid
+  canonical_name      String   @unique
+  category            String?
+  aliases             String[]
+  email_senders       String[]
+  sms_senders         String[]
+  cancel_url          String?
+  cancel_instructions String?
+  region              String[]
+
+  subscriptions Subscription[]
+
+  @@map("vendors")
+}
+
+model Finding {
+  id                      String    @id @default(uuid()) @db.Uuid
+  user_id                 String    @db.Uuid
+  subscription_id         String?   @db.Uuid
+  kind                    String
+  severity                Int?
+  body                    String?
+  estimated_save_minor    BigInt?
+  estimated_save_currency String?   @db.Char(3)
+  resolved_at             DateTime? @db.Timestamptz
+  dismissed_at            DateTime? @db.Timestamptz
+  created_at              DateTime  @default(now()) @db.Timestamptz
+
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscription_id], references: [id])
+
+  @@unique([user_id, kind, body], name: "user_id_kind_body")
+  @@map("findings")
+}

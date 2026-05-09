@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,900&family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;700&display=swap');
+
+.font-serif-italic {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 900;
+}
+
+.shadow-hard {
+  box-shadow: 4px 4px 0 0 #1a1714;
+}
+
+.border-ledger {
+  border: 1px solid #1a1714;
+}
+
+
+:root {
+  --background: #f4efe6;
+  --foreground: #1a1714;
+  --accent: #a23e3e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(162, 62, 62, 0.12), transparent 30%),
+    linear-gradient(135deg, rgba(26, 23, 20, 0.035) 25%, transparent 25%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-display), Georgia, serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
