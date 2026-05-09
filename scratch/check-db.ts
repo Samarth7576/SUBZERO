@@ -15,7 +15,7 @@ async function main() {
   const events = await prisma.rawEvent.findMany();
   console.log("Raw Events Count:", events.length);
   if (events.length > 0) {
-    console.log("First Event Source ID:", events[0].source_id);
+    console.log("First Event Source ID:", events[0]?.source_id);
   }
 }
 
