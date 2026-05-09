@@ -109,7 +109,7 @@ export default async function DashboardPage() {
                       {finding.kind.replace('_', ' ')}
                     </div>
                     <p className="font-medium text-slate-700 leading-relaxed">{finding.body}</p>
-                    {finding.estimated_save_minor > 0n && (
+                    {(finding.estimated_save_minor ?? 0n) > 0n && (
                       <p className="mt-3 text-indigo-600 font-medium">
                         You could save {finding.estimated_save_currency} {(Number(finding.estimated_save_minor) / 100).toFixed(2)} / year
                       </p>
