@@ -44,7 +44,10 @@ export function parseRawEvent(body: string, subject: string): ParsedEvent | null
   if (fullText.includes("$") || fullText.includes("usd")) currency = "USD";
   if (fullText.includes("₹") || fullText.includes("inr")) currency = "INR";
 
-  const amountStr = match[1].replace(",", "");
+  const amountMatch = match[1];
+  if (!amountMatch) return null;
+
+  const amountStr = amountMatch.replace(",", "");
   const amountMinor = BigInt(Math.round(parseFloat(amountStr) * 100));
 
   console.log("Parsed amount:", amountMinor.toString(), currency);
