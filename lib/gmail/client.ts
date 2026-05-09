@@ -190,7 +190,7 @@ export async function getGmailMessage(
         snippet: "Your subscription for Claude Pro has been renewed for $20.00.",
       },
     };
-    return mockMessages[id] || mockMessages["mock_msg_1"];
+    return mockMessages[id] || (mockMessages["mock_msg_1"] as GmailMessage);
   }
 
   const params = new URLSearchParams({
