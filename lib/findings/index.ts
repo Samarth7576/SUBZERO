@@ -34,16 +34,20 @@ export async function runFindingsEngine(userId: string) {
     });
 
     if (events.length >= 2) {
-      const latest = Number(events[0].amount_minor ?? 0n);
-      const prior = Number(events[1].amount_minor ?? 0n);
-      if (latest > prior * 1.05) {
-        findings.push({
-          kind: "price_hike",
-          severity: 4,
-          body: `${sub.display_name} increased their price from ${sub.currency} ${(prior/100).toFixed(2)} to ${(latest/100).toFixed(2)}.`,
-          estimatedSaveMinor: 0,
-          currency: sub.currency
-        });
+      const e0 = events[0];
+      const e1 = events[1];
+      if (e0 && e1) {
+        const latest = Number(e0.amount_minor ?? 0n);
+        const prior = Number(e1.amount_minor ?? 0n);
+        if (latest > prior * 1.05) {
+          findings.push({
+            kind: "price_hike",
+            severity: 4,
+            body: `${sub.display_name} increased their price from ${sub.currency} ${(prior/100).toFixed(2)} to ${(latest/100).toFixed(2)}.`,
+            estimatedSaveMinor: 0,
+            currency: sub.currency
+          });
+        }
       }
     }
 
@@ -71,13 +75,16 @@ export async function runFindingsEngine(userId: string) {
 
   for (const [cat, subs] of Object.entries(byCategory)) {
     if (subs.length >= 2) {
-      findings.push({
-        kind: "duplicate",
-        severity: 5,
-        body: `You have multiple ${cat} subscriptions: ${subs.map(s => s.display_name).join(", ")}. Consider consolidating.`,
-        estimatedSaveMinor: Number(subs[1].amount_minor ?? 0n) * 12,
-        currency: subs[1].currency
-      });
+      const s1 = subs[1];
+      if (s1) {
+        findings.push({
+          kind: "duplicate",
+          severity: 5,
+          body: `You have multiple ${cat} subscriptions: ${subs.map(s => s.display_name).join(", ")}. Consider consolidating.`,
+          estimatedSaveMinor: Number(s1.amount_minor ?? 0n) * 12,
+          currency: s1.currency
+        });
+      }
     }
   }
 
