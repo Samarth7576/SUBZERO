@@ -130,7 +130,7 @@ export async function clusterEventsForUser(userId: string) {
               cycle: result.cycle,
               confidence: result.confidence,
               detected_via: detectedVia,
-              first_seen_on: group[0].occurred_at,
+              first_seen_on: representative.occurred_at,
               last_charge_on: lastEvent.occurred_at,
               next_charge_on: result.nextChargeDate,
               status: "active",
