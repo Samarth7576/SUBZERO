@@ -21,7 +21,7 @@ export async function GET() {
     const headers = ["Date", "Merchant/Sender", "Amount", "Currency", "Source", "Status"];
     const rows = events.map(event => [
       event.occurred_at.toISOString().split('T')[0],
-      `"${event.sender.replace(/"/g, '""')}"`,
+      `"${(event.sender ?? 'Unknown').replace(/"/g, '""')}"`,
       (Number(event.amount_minor) / 100).toFixed(2),
       event.currency,
       event.source.kind,
