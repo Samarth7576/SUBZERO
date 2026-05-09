@@ -32,8 +32,8 @@ export async function GET(request: Request) {
     for (const source of activeSources) {
       try {
         if (source.kind === "gmail") {
-          const count = await syncGmailSource(source.id);
-          newEventsFound += count;
+          const result = await syncGmailSource(source.id);
+          newEventsFound += result.inserted;
         } else if (source.kind === "plaid") {
           const count = await syncPlaidSource(source.id);
           newEventsFound += count;
