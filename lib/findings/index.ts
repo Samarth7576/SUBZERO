@@ -54,7 +54,7 @@ export async function runFindingsEngine(userId: string) {
     // 2. Hidden/Dormant Detection (Mock version)
     // In a real app, we'd check for other non-billing emails.
     // For mock, if they have >= 3 charges and it's Netflix, we'll flag it as "hidden"
-    if (sub.display_name === "Netflix" && sub.confidence >= 0.8) {
+    if (sub.display_name === "Netflix" && Number(sub.confidence) >= 0.8) {
        findings.push({
          kind: "hidden",
          severity: 3,
