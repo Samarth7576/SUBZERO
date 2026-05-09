@@ -57,6 +57,8 @@ export async function clusterEventsForUser(userId: string) {
       let matched = false;
       for (const group of groups) {
         const representative = group[0];
+        if (!representative) continue;
+
         const diff = Math.abs(Number(event.amount_minor!) - Number(representative.amount_minor!));
         const threshold = Number(representative.amount_minor!) * 0.02;
         
@@ -71,6 +73,8 @@ export async function clusterEventsForUser(userId: string) {
 
     for (const group of groups) {
       const representative = group[0];
+      if (!representative) continue;
+
       const isExplicitlyRecurring = (representative.raw_json as any)?.isRecurring === true;
       
       if (group.length < 2 && !isExplicitlyRecurring) {
@@ -81,6 +85,8 @@ export async function clusterEventsForUser(userId: string) {
       
       if (result.confidence >= 0.6 || isExplicitlyRecurring) {
         const representative = group[0];
+        if (!representative) continue;
+
         const lastEvent = group[group.length - 1];
         
         // Compute detected_via

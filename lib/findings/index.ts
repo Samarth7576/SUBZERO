@@ -1,5 +1,6 @@
 import { prisma } from "../db";
 import { notifyNewFinding } from "../notifications";
+import crypto from "crypto";
 
 export type FindingKind = "hidden" | "duplicate" | "trial_ending" | "price_hike" | "dormant";
 
@@ -33,8 +34,8 @@ export async function runFindingsEngine(userId: string) {
     });
 
     if (events.length >= 2) {
-      const latest = Number(events[0].amount_minor);
-      const prior = Number(events[1].amount_minor);
+      const latest = Number(events[0].amount_minor ?? 0n);
+      const prior = Number(events[1].amount_minor ?? 0n);
       if (latest > prior * 1.05) {
         findings.push({
           kind: "price_hike",
@@ -54,7 +55,7 @@ export async function runFindingsEngine(userId: string) {
          kind: "hidden",
          severity: 3,
          body: `You are paying for ${sub.display_name} but haven't engaged with their service emails in 90 days.`,
-         estimatedSaveMinor: Number(sub.amount_minor) * 12, // Annual save
+         estimatedSaveMinor: Number(sub.amount_minor ?? 0n) * 12, // Annual save
          currency: sub.currency
        });
     }
@@ -74,7 +75,7 @@ export async function runFindingsEngine(userId: string) {
         kind: "duplicate",
         severity: 5,
         body: `You have multiple ${cat} subscriptions: ${subs.map(s => s.display_name).join(", ")}. Consider consolidating.`,
-        estimatedSaveMinor: Number(subs[1].amount_minor) * 12,
+        estimatedSaveMinor: Number(subs[1].amount_minor ?? 0n) * 12,
         currency: subs[1].currency
       });
     }
