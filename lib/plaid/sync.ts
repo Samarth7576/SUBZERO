@@ -25,8 +25,8 @@ export async function syncPlaidSource(sourceId: string) {
       const accessToken = await decryptToken(source.oauth_token, source.user_id);
       const response = await plaidClient.transactionsGet({
         access_token: accessToken,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: new Date().toISOString().split('T')[0],
+        start_date: startDate.toISOString().split('T')[0] || "",
+        end_date: new Date().toISOString().split('T')[0] || "",
       });
       transactions = response.data.transactions;
     } catch (e) {
@@ -99,7 +99,7 @@ function generateMockTransactions() {
   for (let i = 0; i < 3; i++) {
     const d = new Date(today);
     d.setMonth(today.getMonth() - i);
-    dates.push(d.toISOString().split('T')[0]);
+    dates.push(d.toISOString().split('T')[0] || "");
   }
 
   return dates.map((date, i) => ({
