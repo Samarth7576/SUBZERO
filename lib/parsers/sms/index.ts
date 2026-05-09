@@ -30,7 +30,7 @@ export function parseSMS(text: string, sender: string, receivedAt: Date): Parsed
   // Example: "Dear Customer, an e-NACH mandate for Rs 999.00 towards NETFLIX has been registered..."
   const enachRegex = /e-?NACH mandate.*?Rs\.?\s*([\d,]+(?:\.\d+)?).*?towards\s+([A-Za-z0-9\s]+)/i;
   const enachMatch = text.match(enachRegex);
-  if (enachMatch) {
+  if (enachMatch && enachMatch[1] && enachMatch[2]) {
     return {
       amountMinor: Math.round(parseFloat(enachMatch[1].replace(/,/g, '')) * 100),
       currency: "INR",
@@ -45,7 +45,7 @@ export function parseSMS(text: string, sender: string, receivedAt: Date): Parsed
   // Example: "Rs.199.00 debited from a/c **1234 on 05-06-26 to VPA netflix@upi"
   const upiRegex = /(?:Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)\s*debited.*?to(?:\s+VPA)?\s+([A-Za-z0-9.\-_@]+)/i;
   const upiMatch = text.match(upiRegex);
-  if (upiMatch) {
+  if (upiMatch && upiMatch[1] && upiMatch[2]) {
     const vendor = upiMatch[2].split('@')[0]; // simple VPA cleanup
     return {
       amountMinor: Math.round(parseFloat(upiMatch[1].replace(/,/g, '')) * 100),
@@ -63,11 +63,26 @@ export function parseSMS(text: string, sender: string, receivedAt: Date): Parsed
   // Example: "Your a/c no. XX1234 is debited for Rs.499.00 on 05-06-26 and credited to SPOTIFY."
   const debitRegex = /debited.*?for\s*(?:Rs\.?|INR)\s*([\d,]+(?:\.\d+)?).*?credited to\s+([A-Za-z0-9\s]+)\./i;
   const debitMatch = text.match(debitRegex);
-  if (debitMatch) {
+  if (debitMatch && debitMatch[1] && debitMatch[2]) {
     return {
       amountMinor: Math.round(parseFloat(debitMatch[1].replace(/,/g, '')) * 100),
       currency: "INR",
       vendorName: debitMatch[2].trim(),
+      date: receivedAt,
+      senderCanonical: canonicalSender,
+      isRecurring: /recurring|subscription/i.test(text),
+    };
+  }
+
+  // Pattern 4: Interac e-Transfer (Canada)
+  // Example: "INTERAC e-Transfer: You have sent a transfer to NETFLIX for $15.99."
+  const interacRegex = /INTERAC e-Transfer:.*?sent a transfer to\s+([A-Za-z0-9\s]+)\s+for\s*(?:\$|CAD)\s*([\d,]+(?:\.\d+)?)/i;
+  const interacMatch = text.match(interacRegex);
+  if (interacMatch && interacMatch[1] && interacMatch[2]) {
+    return {
+      amountMinor: Math.round(parseFloat(interacMatch[2].replace(/,/g, '')) * 100),
+      currency: "CAD",
+      vendorName: interacMatch[1].trim(),
       date: receivedAt,
       senderCanonical: canonicalSender,
       isRecurring: /recurring|subscription/i.test(text),
