@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,900&family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;700&display=swap');
+@import "tailwindcss";
 
 .font-serif-italic {
   font-family: 'Fraunces', serif;

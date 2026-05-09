@@ -5,16 +5,17 @@ import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireCurrentUser();
+    const { id } = await params;
     const body = await request.json();
     const { amount_minor, cycle } = body;
 
     const subscription = await prisma.subscription.update({
       where: { 
-        id: params.id,
+        id,
         user_id: user.id // Safety check: ensure it belongs to the user
       },
       data: {
