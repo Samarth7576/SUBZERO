@@ -46,7 +46,7 @@ export function parseSMS(text: string, sender: string, receivedAt: Date): Parsed
   const upiRegex = /(?:Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)\s*debited.*?to(?:\s+VPA)?\s+([A-Za-z0-9.\-_@]+)/i;
   const upiMatch = text.match(upiRegex);
   if (upiMatch && upiMatch[1] && upiMatch[2]) {
-    const vendor = upiMatch[2].split('@')[0]; // simple VPA cleanup
+    const vendor = upiMatch[2].split('@')[0] || "Unknown"; // simple VPA cleanup
     return {
       amountMinor: Math.round(parseFloat(upiMatch[1].replace(/,/g, '')) * 100),
       currency: "INR",
