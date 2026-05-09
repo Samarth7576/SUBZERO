@@ -33,9 +33,12 @@ export async function decryptToken(encryptedToken: string, userId: string): Prom
   const decrypted = decrypt(encryptedToken);
   if (!decrypted.includes(':')) return decrypted;
   
-  const [storedUserId, token] = decrypted.split(':');
-  if (storedUserId !== userId) {
-    throw new Error("Token security violation: User ID mismatch");
+  const parts = decrypted.split(':');
+  const storedUserId = parts[0];
+  const token = parts[1];
+
+  if (!token || storedUserId !== userId) {
+    throw new Error("Token security violation: User ID mismatch or invalid format");
   }
   return token;
 }
