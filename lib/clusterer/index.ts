@@ -88,6 +88,7 @@ export async function clusterEventsForUser(userId: string) {
         if (!representative) continue;
 
         const lastEvent = group[group.length - 1];
+        if (!lastEvent) continue;
         
         // Compute detected_via
         const sourceKinds = group.map((e: any) => e.source.kind.startsWith("sms") ? "sms" : e.source.kind);
