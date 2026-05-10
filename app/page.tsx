@@ -1,6 +1,5 @@
 import { requireCurrentUser } from "../lib/auth/current-user";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 
 export default async function Home() {
   let user;
@@ -137,7 +136,7 @@ export default async function Home() {
           </div>
           <p className="text-slate-400 text-sm">© 2024 SUBZERO Financial Inc. Built for humans.</p>
           <div className="flex gap-6 text-sm font-medium text-slate-500">
-             <a href="#" className="hover:text-indigo-600 transition-colors">Privacy</a>
+             <a href="/privacy" className="hover:text-indigo-600 transition-colors">Privacy</a>
              <a href="#" className="hover:text-indigo-600 transition-colors">Terms</a>
              <a href="#" className="hover:text-indigo-600 transition-colors">Contact</a>
           </div>
