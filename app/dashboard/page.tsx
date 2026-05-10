@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { requireCurrentUser } from "../../lib/auth/current-user";
 import { prisma } from "../../lib/db";
