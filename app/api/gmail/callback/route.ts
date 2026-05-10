@@ -38,12 +38,10 @@ export async function GET(request: NextRequest) {
     } else {
       const cookieStore = await cookies();
       const expectedState = cookieStore.get(STATE_COOKIE)?.value;
-      if (!code || !state || !expectedState || state !== expectedState) {
-        return NextResponse.json(
-          { error: "Invalid Gmail OAuth callback state." },
-          { status: 400 },
-        );
-      }
+      if (!code) return NextResponse.json({ error: "Missing code parameter" }, { status: 400 });
+      if (!state) return NextResponse.json({ error: "Missing state parameter" }, { status: 400 });
+      if (!expectedState) return NextResponse.json({ error: "Missing state cookie — cookie was not sent" }, { status: 400 });
+      if (state !== expectedState) return NextResponse.json({ error: `State mismatch` }, { status: 400 });
     }
 
     let tokens;
