@@ -23,14 +23,7 @@ export async function GET(request: NextRequest) {
     } else {
       if (!code) return NextResponse.json({ error: "Missing code parameter" }, { status: 400 });
       if (!state) return NextResponse.json({ error: "Missing state parameter" }, { status: 400 });
-      const { gmailState } = await import("../../../../lib/gmail/state");
-      console.log("STATE DEBUG:", {
-        userId: user.id,
-        receivedState: state.slice(0, 10) + "...",
-        currentExpected: gmailState(user.id).slice(0, 10) + "...",
-        match: verifyGmailState(state, user.id),
-      });
-      if (!verifyGmailState(state, user.id)) return NextResponse.json({ error: "Invalid state" }, { status: 400 });
+      if (!verifyGmailState(state, user.email!)) return NextResponse.json({ error: "Invalid state" }, { status: 400 });
     }
 
     let tokens;

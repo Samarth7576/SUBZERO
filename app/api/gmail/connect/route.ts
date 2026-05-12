@@ -12,7 +12,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    const state = gmailState(user.id);
+    const state = gmailState(user.email!);
     return NextResponse.redirect(buildGmailAuthUrl(state));
   } catch (error: any) {
     console.error("Connection Error:", error);
