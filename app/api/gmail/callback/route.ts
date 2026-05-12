@@ -1,5 +1,5 @@
+import { createHmac } from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { requireCurrentUser } from "../../../../lib/auth/current-user";
 import { encryptToken } from "../../../../lib/crypto";
 import { prisma } from "../../../../lib/db";
@@ -8,7 +8,16 @@ import {
   getGmailProfile,
 } from "../../../../lib/gmail/client";
 
-const STATE_COOKIE = "ledger_gmail_oauth_state";
+function verifyState(state: string, userId: string): boolean {
+  const [encodedPayload, sig] = state.split(".");
+  if (!encodedPayload || !sig) return false;
+  const payload = Buffer.from(encodedPayload, "base64url").toString();
+  const [payloadUserId, timestamp] = payload.split(":");
+  if (payloadUserId !== userId) return false;
+  if (Date.now() - Number(timestamp) > 10 * 60 * 1000) return false;
+  const expectedSig = createHmac("sha256", process.env.AUTH_SECRET!).update(payload).digest("hex");
+  return sig === expectedSig;
+}
 
 export async function GET(request: NextRequest) {
   console.log("Trace: /api/gmail/callback started");
@@ -16,32 +25,16 @@ export async function GET(request: NextRequest) {
     const user = await requireCurrentUser();
     console.log("Trace: User found in callback", user.email);
 
-    if (process.env.MOCK_MODE === "true") {
-      // Clear any potential conflicts first
-      await prisma.user.deleteMany({ where: { email: user.email } });
-      
-      await prisma.user.create({
-        data: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        },
-      });
-    }
-
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
     const state = url.searchParams.get("state");
-    
+
     if (process.env.MOCK_MODE === "true" && code === "mock_code") {
-       console.log("Trace: Handling mock callback");
+      console.log("Trace: Handling mock callback");
     } else {
-      const cookieStore = await cookies();
-      const expectedState = cookieStore.get(STATE_COOKIE)?.value;
       if (!code) return NextResponse.json({ error: "Missing code parameter" }, { status: 400 });
       if (!state) return NextResponse.json({ error: "Missing state parameter" }, { status: 400 });
-      if (!expectedState) return NextResponse.json({ error: "Missing state cookie — cookie was not sent" }, { status: 400 });
-      if (state !== expectedState) return NextResponse.json({ error: `State mismatch` }, { status: 400 });
+      if (!verifyState(state, user.id)) return NextResponse.json({ error: "Invalid state" }, { status: 400 });
     }
 
     let tokens;
@@ -86,11 +79,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const response = NextResponse.redirect(new URL("/dashboard", request.url));
-    const cookieStore = await cookies();
-    cookieStore.delete(STATE_COOKIE);
-
-    return response;
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   } catch (error) {
     console.error("Trace: Error in callback route", error);
     throw error;
