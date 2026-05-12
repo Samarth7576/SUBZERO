@@ -6,14 +6,7 @@ import {
   exchangeGmailCode,
   getGmailProfile,
 } from "../../../../lib/gmail/client";
-import { gmailState } from "../connect/route";
-
-function verifyState(state: string, userId: string): boolean {
-  const now = Date.now();
-  const current = gmailState(userId, now);
-  const previous = gmailState(userId, now - 10 * 60 * 1000);
-  return state === current || state === previous;
-}
+import { verifyGmailState } from "../../../../lib/gmail/state";
 
 export async function GET(request: NextRequest) {
   console.log("Trace: /api/gmail/callback started");
@@ -30,7 +23,7 @@ export async function GET(request: NextRequest) {
     } else {
       if (!code) return NextResponse.json({ error: "Missing code parameter" }, { status: 400 });
       if (!state) return NextResponse.json({ error: "Missing state parameter" }, { status: 400 });
-      if (!verifyState(state, user.id)) return NextResponse.json({ error: "Invalid state" }, { status: 400 });
+      if (!verifyGmailState(state, user.id)) return NextResponse.json({ error: "Invalid state" }, { status: 400 });
     }
 
     let tokens;

@@ -1,14 +1,7 @@
-import { createHmac } from "crypto";
 import { NextResponse } from "next/server";
 import { requireCurrentUser } from "../../../../lib/auth/current-user";
 import { buildGmailAuthUrl } from "../../../../lib/gmail/client";
-
-export function gmailState(userId: string, now = Date.now()): string {
-  const window = Math.floor(now / (10 * 60 * 1000));
-  return createHmac("sha256", process.env.AUTH_SECRET ?? "fallback")
-    .update(`gmail-oauth:${userId}:${window}`)
-    .digest("hex");
-}
+import { gmailState } from "../../../../lib/gmail/state";
 
 export async function GET(request: Request) {
   try {
