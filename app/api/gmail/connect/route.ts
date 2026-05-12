@@ -3,14 +3,14 @@ import { NextResponse } from "next/server";
 import { requireCurrentUser } from "../../../../lib/auth/current-user";
 import { buildGmailAuthUrl } from "../../../../lib/gmail/client";
 
-function signState(userId: string): string {
-  const payload = `${userId}:${Date.now()}`;
-  const sig = createHmac("sha256", process.env.AUTH_SECRET!).update(payload).digest("hex");
-  return `${Buffer.from(payload).toString("base64url")}.${sig}`;
+export function gmailState(userId: string, now = Date.now()): string {
+  const window = Math.floor(now / (10 * 60 * 1000));
+  return createHmac("sha256", process.env.AUTH_SECRET ?? "fallback")
+    .update(`gmail-oauth:${userId}:${window}`)
+    .digest("hex");
 }
 
 export async function GET(request: Request) {
-  console.log("Trace: /api/gmail/connect started");
   try {
     const user = await requireCurrentUser();
 
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    const state = signState(user.id);
+    const state = gmailState(user.id);
     return NextResponse.redirect(buildGmailAuthUrl(state));
   } catch (error: any) {
     console.error("Connection Error:", error);

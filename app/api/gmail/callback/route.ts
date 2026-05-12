@@ -1,4 +1,3 @@
-import { createHmac } from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { requireCurrentUser } from "../../../../lib/auth/current-user";
 import { encryptToken } from "../../../../lib/crypto";
@@ -7,16 +6,13 @@ import {
   exchangeGmailCode,
   getGmailProfile,
 } from "../../../../lib/gmail/client";
+import { gmailState } from "../connect/route";
 
 function verifyState(state: string, userId: string): boolean {
-  const [encodedPayload, sig] = state.split(".");
-  if (!encodedPayload || !sig) return false;
-  const payload = Buffer.from(encodedPayload, "base64url").toString();
-  const [payloadUserId, timestamp] = payload.split(":");
-  if (payloadUserId !== userId) return false;
-  if (Date.now() - Number(timestamp) > 10 * 60 * 1000) return false;
-  const expectedSig = createHmac("sha256", process.env.AUTH_SECRET!).update(payload).digest("hex");
-  return sig === expectedSig;
+  const now = Date.now();
+  const current = gmailState(userId, now);
+  const previous = gmailState(userId, now - 10 * 60 * 1000);
+  return state === current || state === previous;
 }
 
 export async function GET(request: NextRequest) {
