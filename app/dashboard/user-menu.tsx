@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { signOut } from "next-auth/react";
 import { deleteAccountAction } from "../actions/delete-account";
 
 export default function UserMenu({ userName, userInitial }: { userName: string, userInitial: string }) {
@@ -42,12 +43,12 @@ export default function UserMenu({ userName, userInitial }: { userName: string, 
             <p className="text-sm font-medium text-slate-800 truncate">{userName}</p>
           </div>
           <div className="p-1 space-y-1">
-            <a
-              href="/api/auth/signout"
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="block w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors font-medium"
             >
               Sign Out
-            </a>
+            </button>
             <a
               href="/api/user/export"
               className="block w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors font-medium"
