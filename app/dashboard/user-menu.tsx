@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { signOut } from "next-auth/react";
+import { signOutAction } from "../actions/sign-out";
 import { deleteAccountAction } from "../actions/delete-account";
 
 export default function UserMenu({ userName, userInitial }: { userName: string, userInitial: string }) {
@@ -44,7 +44,7 @@ export default function UserMenu({ userName, userInitial }: { userName: string, 
           </div>
           <div className="p-1 space-y-1">
             <button
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => signOutAction()}
               className="block w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors font-medium"
             >
               Sign Out
