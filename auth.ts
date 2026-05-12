@@ -19,6 +19,7 @@ const providers: Provider[] = [
         response_type: "code",
       },
     },
+    checks: ["state"],
   }),
 ];
 
