@@ -20,6 +20,7 @@ const providers: Provider[] = [
       },
     },
     checks: ["state"],
+    allowDangerousEmailAccountLinking: true,
   }),
 ];
 

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\Samarth\\\\Desktop\\\\EXPENSE WATCHDOG\\\\ledger\\\\app\\\\api\\\\signout\")",
+      "Bash(Out-Null)"
+    ]
+  }
+}
